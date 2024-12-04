@@ -12,3 +12,13 @@ class Paddle(pygame.sprite.Sprite):
         self.rect.center = (WIDTH / 2, HEIGHT - 5)
 
         self.speed = 5
+         def move(self, action):
+        if action == "Left":
+            self.rect.x -= self.speed
+        if action == "Right":
+            self.rect.x += self.speed
+
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
