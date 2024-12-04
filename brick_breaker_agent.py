@@ -21,3 +21,11 @@ class BrickBreakerAgent:
         pygame.event.get()
         # Aleatory step
         next_step = np.random.choice(list(game.action_space))
+        if np.random.uniform() <= self.exploitation_ratio:
+            # We take the maximum value of the q_table
+            idx_action = np.random.choice(np.flatnonzero(
+                self._q_table[state[0], state[1], state[2]] == self._q_table[state[0], state[1], state[2]].max()
+            ))
+            next_step = list(game.action_space)[idx_action]
+
+        return next_step
