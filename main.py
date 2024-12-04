@@ -35,3 +35,8 @@ def menu():
     elif option == '3':
         print("Bye!")
         exit()
+
+def train():
+    learner, game = play(rounds=200000, discount_factor=0.2, learning_rate=0.1, exploitation_ratio=0.85,
+                         animate=False)
+    save_model(game, learner)
