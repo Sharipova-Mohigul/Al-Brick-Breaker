@@ -41,3 +41,22 @@ def draw_text(text, size, x, y):
     text_rect.midtop = (x, y)
     SCREEN.blit(text_surface, text_rect)
 
+
+class GameManager:
+    def __init__(self):
+        self.life = 3
+        self.game_over = False
+
+        self.action_space = ['Right', 'Left']
+        self.state = [0, 0, 0]
+        self._step_penalization = 0
+        self.total_reward = 0
+
+        rows = ceil(HEIGHT / 5)
+        columns = ceil(WIDTH / 3.75)
+
+        self.positions_space = np.array([[[0 for z in range(columns)]
+                                          for y in range(rows)]
+                                         for x in range(rows)])
+
+        self.all_sprites, self.bricks_sprites, self.ball, self.paddle = create_sprites()
