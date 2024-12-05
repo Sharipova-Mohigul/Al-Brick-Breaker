@@ -77,3 +77,48 @@ class GameManager:
         reward = score - self._step_penalization
         self.total_reward += reward
         return self.state, reward, done
+
+     def apply_action(self, action, animate=False):
+        self.paddle.move(action)
+        score = self.advances_frame()
+
+        if animate:
+            self._animate_frame()
+
+        self.state = [floor(self.paddle.rect.x / 5), floor(self.ball.rect.x / 5), floor(self.ball.rect.y / 5)]
+        return score
+
+    def _animate_frame(self):
+        CLOCK.tick(FPS)
+
+        # Draw / render
+        SCREEN.fill(BLACK)
+        self.all_sprites.draw(SCREEN)
+
+        draw_text(str(self.get_life()) + " Lifes", 18, WIDTH - 40, 10)
+
+        # After drawing everything, flip the display
+        pygame.display.flip()
+
+    def advances_frame(self):
+        self.all_sprites.update(self)
+        score = 0
+
+        self.check_ball_hit_bricks()
+        if self.check_ball_hit_paddle():
+            score += 20
+        if self.check_ball_hit_bottom():
+            score -= 5
+
+        return score
+
+    def check_ball_hit_bottom(self):
+        if self.ball.rect.bottom > HEIGHT - 5:
+            self.ball.rect.center = (WIDTH / 2, HEIGHT / 2)
+            self.lose_life()
+            return True
+
+    def check_ball_hit_paddle(self):
+        if self.paddle.rect.colliderect(self.ball.rect):
+            self.ball.speed_y *= -1
+            return True
