@@ -109,3 +109,6 @@ def play(rounds=250, discount_factor=0.1, learning_rate=0.1,
 
     # learner.print_policy()
     return learner, game
+
+if __name__ == '__main__':
+    main()
