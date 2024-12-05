@@ -60,3 +60,20 @@ class GameManager:
                                          for x in range(rows)])
 
         self.all_sprites, self.bricks_sprites, self.ball, self.paddle = create_sprites()
+
+    def reset(self):
+        self.life = 3
+        self.game_over = False
+        self.state = [0, 0, 0]
+        self._step_penalization = 0
+
+        self.all_sprites, self.bricks_sprites, self.ball, self.paddle = create_sprites()
+
+        return self.state
+
+    def step(self, action, animate=False):
+        score = self.apply_action(action, animate)
+        done = self.life <= 0  # final
+        reward = score - self._step_penalization
+        self.total_reward += reward
+        return self.state, reward, done
