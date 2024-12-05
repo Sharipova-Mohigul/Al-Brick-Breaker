@@ -61,3 +61,51 @@ def load_model():
     with open("result/learner.obj", "rb") as file:
         learner = pickle.load(file)
     return game, learner
+
+
+def play(rounds=250, discount_factor=0.1, learning_rate=0.1,
+         exploitation_ratio=0.9, learner=None, game=None, animate=False):
+    if game is None:
+        game = game_manager.GameManager()
+
+    if learner is None:
+        print("Begin new Train!")
+        learner = BrickBreakerAgent(game, discount_factor=discount_factor, learning_rate=learning_rate,
+                                    exploitation_ratio=exploitation_ratio)
+
+    max_points = 0
+    first_max_reached = 0
+    total_rw = 0
+    steps = []
+
+    for played_games in range(0, rounds):
+        state = game.reset()
+        reward, done = None, None
+
+        itera = 0
+        while (done != True) and (itera < 30000 and game.get_total_reward() <= 1000000):
+            old_state = np.array(state)
+            next_action = learner.get_next_step(state, game)
+            state, reward, done = game.step(next_action, animate=animate)
+            if rounds > 1:
+                learner.update(game, old_state, next_action, reward, state, done)
+            itera += 1
+
+        steps.append(itera)
+
+        total_rw += game.get_total_reward()
+        if game.get_total_reward() > max_points:
+            max_points = game.get_total_reward()
+            first_max_reached = played_games
+
+        if played_games % 500 == 0 and played_games > 1 and not animate:
+            print("-- Partidas[", played_games, "] Avg.Puntos[", int(total_rw / played_games), "]  AVG Steps[",
+                  int(np.array(steps).mean()), "] Max Score[", max_points, "]")
+            save_model(game, learner)
+
+    if played_games > 1:
+        print('Partidas[', played_games, '] Avg.Puntos[', int(total_rw / played_games), '] Max score[', max_points,
+              '] en partida[', first_max_reached, ']')
+
+    # learner.print_policy()
+    return learner, game
