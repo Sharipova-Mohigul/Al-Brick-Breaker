@@ -32,3 +32,12 @@ def create_sprites():
     all_sprites.add(ball)
 
     return all_sprites, bricks_sprites, ball, paddle
+
+
+def draw_text(text, size, x, y):
+    font = pygame.font.SysFont('Arial', size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    SCREEN.blit(text_surface, text_rect)
+
