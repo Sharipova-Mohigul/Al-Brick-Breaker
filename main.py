@@ -40,3 +40,24 @@ def train():
     learner, game = play(rounds=200000, discount_factor=0.2, learning_rate=0.1, exploitation_ratio=0.85,
                          animate=False)
     save_model(game, learner)
+
+
+def trained_model():
+    game, learner = load_model()
+    learner2 = BrickBreakerAgent(game, policy=learner.get_policy())
+    learner2.exploitation_ratio = 1.0  # remove exploration from the trained model
+    play(rounds=1, learner=learner2, game=game, animate=True)
+
+
+def save_model(game, learner):
+    game.save()
+    learner.save()
+
+
+def load_model():
+    game = game_manager.GameManager()
+    game.load()
+
+    with open("result/learner.obj", "rb") as file:
+        learner = pickle.load(file)
+    return game, learner
