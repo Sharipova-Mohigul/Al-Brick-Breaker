@@ -122,3 +122,43 @@ class GameManager:
         if self.paddle.rect.colliderect(self.ball.rect):
             self.ball.speed_y *= -1
             return True
+
+    def check_ball_hit_bricks(self):
+        hits = pygame.sprite.spritecollide(self.ball, self.bricks_sprites, True)
+        if hits:
+            self.ball.speed_y *= -1
+
+    def lose_life(self):
+        self.life -= 1
+
+    def get_life(self):
+        return self.life
+
+    def set_game_over(self, game_over):
+        self.game_over = game_over
+
+    def get_game_over(self):
+        return self.game_over
+
+    def get_total_reward(self):
+        return self.total_reward
+
+    def save(self):
+        # Create a dictionary with all the data to save
+        data = {
+            'state': self.state,
+            '_step_penalization': self._step_penalization,
+            'total_reward': self.total_reward,
+            'positions_space': self.positions_space,
+        }
+
+        with open("result/game.obj", 'wb') as file:
+            pickle.dump(data, file)
+
+    def load(self):
+        with open("result/game.obj", 'rb') as file:
+            data = pickle.load(file)
+
+        self.state = data['state']
+        self._step_penalization = data['_step_penalization']
+        self.positions_space = data['positions_space']
